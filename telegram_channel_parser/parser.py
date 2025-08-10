@@ -67,7 +67,9 @@ class Config:
     channel_username: str = field(
         default_factory=lambda: os.environ["APP_CHANNEL_USERNAME"]
     )
-    keyword: str = field(default_factory=lambda: os.environ["APP_KEYWORD"])
+    keywords: Sequence[str] = field(
+        default_factory=lambda: os.environ["APP_KEYWORD"].split(",")
+    )
     chat_id: str = field(default_factory=lambda: os.environ["APP_CHAT_ID"])
     last_seen_id: int = field(
         default_factory=lambda: int(os.environ.get("APP_LAST_SEEN_ID", 0))
@@ -80,21 +82,27 @@ class Config:
 def parse(config: Config) -> None:
     last_seen_id = config.last_seen_id
     logger.info(
-        "Запущен мониторинг @%s на слово '%s'...",
+        "Запущен мониторинг @%s на слова %s...",
         config.channel_username,
-        config.keyword,
+        config.keywords,
     )
     while True:
         try:
             posts = fetch_posts(channel_username=config.channel_username)
             new_posts = [p for p in posts if p.msg_id > last_seen_id]
             for post in new_posts:
-                if config.keyword.casefold() in post.text.casefold():
+                found = [
+                    keyword
+                    for keyword in config.keywords
+                    if keyword.casefold() in post.text.casefold()
+                ]
+                if found:
                     snippet = (
                         (post.text[:500] + "…") if len(post.text) > 500 else post.text
                     )
                     send_message(
-                        text=f"Найдено в @{config.channel_username} "
+                        text=f"Найдены слова [{', '.join(found)}] в "
+                        f"@{config.channel_username} "
                         f"#{post.msg_id}:\n{post.url}\n\n{snippet}",
                         bot_token=config.bot_token,
                         chat_id=config.chat_id,
