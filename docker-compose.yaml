@@ -1,0 +1,12 @@
+services:
+  app:
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    command: python -m telegram_channel_parser
+    environment:
+      APP_BOT_TOKEN: ${APP_BOT_TOKEN}
+      APP_CHANNEL_USERNAME: ${APP_CHANNEL_USERNAME}
+      APP_CHAT_ID: ${APP_CHAT_ID}
+      APP_KEYWORD: ${APP_KEYWORD}

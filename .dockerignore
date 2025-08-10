@@ -1,0 +1,39 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.swp
+
+# Environment & secrets
+.env
+*.pem
+*.key
+*.crt
+
+# Tests (optional, if not needed in container)
+tests/
+.coverage
+htmlcov/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE configs
+.idea/
+.vscode/
+*.code-workspace
